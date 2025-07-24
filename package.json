@@ -1,0 +1,43 @@
+{
+  "name": "nodejs_backend_kinalfootballmanager",
+  "version": "1.0.0",
+  "description": "Esta propuesta busca implementar y desarrollar una API web escalable y funcional para la gestión del apartado de canchas en nuestro centro educativo KINAL de forma eficiente y moderna, El objetivo principal del proyecto es digitalizar y automatizar el apartado, pago y registro respecto al uso de la cancha escolar en base a un conjunto de tecnologías JavaScript utilizadas para desarrollar aplicaciones web completas (Stack MERN), desde el frontend hasta el backend, compuestas por MongoDb para el manejo de la base de datos para los registros y constancias de los movimientos en la aplicación web, NodeJs como entorno base para ejecutar JavaScript en el servidor para la conexión de los procesos lógicos del backend hacia la base de datos, ExpressJs como framework para el entorno desarrollado en la conexión con NodeJs para el manejo de las rutas del servidor con el frontend recibiendo sus solicitudes y respondiendo con los datos necesarios y ReactJs como librería de desarrollo de JavaScript para crear interfaces de usuario interactivas y rápidas como botones,formularios y etc..\r Objetivos Específicos:\r Implementar un sistema para las reservas de nuestra cancha institucional de futbol que de manera visual muestre los horarios disponibles según el mes en que se encuentren.\r Permitir pagos en línea mediante tarjeta de crédito o débito desde la misma plataforma y ahorrarnos complicaciones mayores.\r Integrar un sistema de noticias y avisos para comunicar eventos como nuestros torneos de futbol llamados Inter talleres entre algunos otros más.\r Ofrecer comprobantes y/o facturas de manera digital con toda la información necesaria detallada en este mismo apartado.\r Registrar datos de los torneos anuales y permitir inscripción de equipos desde la app en un futuro.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/H-E-Software-develpment/NodeJs_Backend_KinalFootballManager.git"
+  },
+  "keywords": [],
+  "author": "Anthony Josue Escobar Ponce",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/H-E-Software-develpment/NodeJs_Backend_KinalFootballManager/issues"
+  },
+  "homepage": "https://github.com/H-E-Software-develpment/NodeJs_Backend_KinalFootballManager#readme",
+  "dependencies": {
+    "@azure/msal-node": "^3.6.4",
+    "argon2": "^0.43.1",
+    "axios": "^1.11.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.0.1",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.18.0",
+    "mongoose": "^8.16.4",
+    "morgan": "^1.10.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
