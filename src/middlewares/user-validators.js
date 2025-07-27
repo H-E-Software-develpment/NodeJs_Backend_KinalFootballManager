@@ -5,6 +5,7 @@ import { handleErrors } from "./handle-errors.js";
 import { validateJWT } from "./validate-jwt.js";
 import { hasRoles } from "./validate-roles.js";
 
+//---------------- WITHOUT ROLES ---------------- // 
 export const registerValidator = [
     body("name").notEmpty().withMessage("completeName is required").isString().withMessage("your name must be a valid name"),
     body("email").notEmpty().withMessage("Email is required").isEmail().withMessage("Email is invalid").custom(emailDuplicated).custom(validKinalEmail),
@@ -22,58 +23,67 @@ export const registerValidator = [
 ];
 
 export const loginValidator = [
-    body("email").notEmpty().withMessage("Email is required").isString().withMessage("Email must be a string")
-        .isEmail().withMessage("Invalid email format").custom(findEmail),
+    body("email").notEmpty().withMessage("Email is required").isString().withMessage("Email must be a string").
+        isEmail().withMessage("Invalid email format").custom(findEmail).custom(validKinalEmail),
     body("password").notEmpty().withMessage("Password is required"),
     validateFields,
     handleErrors
 ];
 
-/*
-export const findUserValidator = [
+//---------------- ONLY ADMINISTRATOR ROLES ---------------- // 
+export const findUsersValidator = [
     validateJWT,
-    param("uid").notEmpty().withMessage("user is required").isMongoId().withMessage("The user provided is not valid").custom(findUser),
-    validateFields,
-    handleErrors
-];
-
-export const findUserForAdminValidator = [
-    validateJWT,
-    hasRoles("PLATFORM_ADMIN"),
+    hasRoles("ADMINISTRATOR"),
     body("uid").optional().isMongoId().withMessage("The user provided is not valid").custom(findUser),
     body("name").optional().isString().withMessage("your name is not a valid name"),
-    body("email").optional().isEmail().withMessage("Email is invalid").custom(findEmail),
+    body("email").optional().isEmail().withMessage("Email is invalid").custom(findEmail).custom(validKinalEmail),
+    body("academic").optional().isString().withMessage("your academic code is not valid"),
     body("role").optional().isString().withMessage("role is not valid").custom(validRole),
     validateFields,
     handleErrors
 ];
 
-export const getUsersValidator = [
-    validateJWT,
-    hasRoles("PLATFORM_ADMIN", "HOTEL_ADMIN"),
-    validateFields,
-    handleErrors
-]
-
 export const editUserValidator = [
     validateJWT,
+    hasRoles("ADMINISTRATOR"),
     param("uid").notEmpty().withMessage("user is required").isMongoId().withMessage("The user provided is not valid").custom(findUser),
     body("name").optional().isString().withMessage("your name is not a valid name"),
-    body("email").optional().isEmail().withMessage("Email is invalid").custom(emailDuplicated),
+    body("phone").optional().isString().withMessage("your phone number is not a valid"),
+    body("email").optional().isEmail().withMessage("Email is invalid").custom(findEmail).custom(validKinalEmail),
+    body("academic").optional().isString().withMessage("your academic code is not valid"),
+    body("role").optional().isString().withMessage("role is not valid").custom(validRole),
     validateFields,
     handleErrors
 ];
 
 export const deleteUserValidator = [
     validateJWT,
+    hasRoles("ADMINISTRATOR"),
     param("uid").notEmpty().withMessage("user is required").isMongoId().withMessage("The user provided is not valid").custom(findUser), 
     validateFields,
     handleErrors
 ];
 
+//---------------- ALL ROLES ---------------- // 
+
+export const showProfileValidator = [
+    validateJWT,
+    validateFields,
+    handleErrors
+];
+
+export const editUserProfileValiator = [
+    validateJWT,
+    body("name").optional().isString().withMessage("your name is not a valid name"),
+    body("phone").optional().isString().withMessage("your phone number is not a valid"),
+    body("email").optional().isEmail().withMessage("Email is invalid").custom(findEmail).custom(validKinalEmail),
+    body("academic").optional().isString().withMessage("your academic code is not valid"),
+    validateFields,
+    handleErrors
+]
+
 export const changePasswordValidator = [
     validateJWT,
-    param("uid").notEmpty().withMessage("user is required").isMongoId().withMessage("The user provided is not valid").custom(findUser), 
     body("password").notEmpty().withMessage("Password is required").isStrongPassword({
         minLength: 8,
         minLowercase: 1,
@@ -86,12 +96,3 @@ export const changePasswordValidator = [
     handleErrors
 ];
 
-export const changeRoleValidator = [
-    validateJWT,
-    hasRoles("PLATFORM_ADMIN", "HOTEL_ADMIN"),
-    param("uid").notEmpty().withMessage("user is required").isMongoId().withMessage("The user provided is not valid").custom(findUser), 
-    body("role").notEmpty().withMessage("role is required").custom(validRole),
-    validateFields,
-    handleErrors
-];
-*/

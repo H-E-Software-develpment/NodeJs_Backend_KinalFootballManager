@@ -1,47 +1,24 @@
 import User from "./user.model.js";
 import { hash, verify } from "argon2";
 
-//todos - general
-export const findUser = async (req, res) => {
+// ---------- ADMINISTRATOR ROLE ---------- //
+//Allows ADMINISTRATORS to find users based on different parameters
+//allows to find users to get their individual and detailed information (uid)
+// allows to find users by name and email 
+//allows to find users by their academic code
+export const findUsers = async (req, res) => {
     try {
-        const account = req.userJwt;
-        const { uid } = req.params;
-
-        const user = await User.findById(uid);
-
-        if (!user || user.status === false) {
-            return res.status(400).json({
-                success: false,
-                message: "User not found"
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "Account found successfully",
-            user
-        });
-    } catch (err) {
-        return res.status(500).json({
-            success: false,
-            message: "Failed to find this account",
-            error: err.message
-        });
-    }
-};
-
-export const findUserForAdmin = async (req, res) => {
-    try {
-        const account = req.userJwt;
+        const logged = req.userJwt;
         const { limit = 10, from = 0 } = req.query;
         const query = { status: true };
-        const { uid, name, email, role } = req.body;
+        const { uid, name, email, academic, role } = req.body;
 
         let filterParameter = { ...query };
 
         if (uid) filterParameter._id = uid;
         if (name) filterParameter.name = { $regex: name, $options: "i" };
         if (email) filterParameter.email = email;
+        if (academic) filterParameter.academic = academic;
         if (role) filterParameter.role = role;
 
         let user = await User.find(filterParameter).skip(Number(from)).limit(Number(limit));
@@ -64,13 +41,15 @@ export const findUserForAdmin = async (req, res) => {
     }
 };
 
+//allows administratoras to edit only students accounts not other admins
+//allows to change role of account student to administrator in case needed
 export const editUser = async (req, res) => {
     try {
         const { uid } = req.params;
         const newData = req.body;
-        const account = req.userJwt;
+        const logged = req.userJwt;
 
-        const found = await User.findById(uid);
+        const found = await User.findOne({ role: "STUDENT", status: true, uid });
 
         if (!found) {
             return res.status(400).json({
@@ -78,21 +57,6 @@ export const editUser = async (req, res) => {
                 message: "user not found"
             });
         };
-
-        if (account.role !== "PLATFORM_ADMIN" && account.role !== "HOTEL_ADMIN") {
-            if (account._id.toString() !== uid) {
-                return res.status(401).json({
-                    success: false,
-                    message: "not allowed / user not found"
-                });
-            }
-        }
-        if (account.role === "HOTEL_ADMIN" && found.role === "PLATFORM_ADMIN") {
-            return res.status(401).json({
-                success: false,
-                message: "not allowed - user not found"
-            });
-        }
 
         const user = await User.findByIdAndUpdate(uid, newData, { new: true });
 
@@ -110,12 +74,13 @@ export const editUser = async (req, res) => {
     }
 };
 
+//Allows to delete users account (only students not others admins)
 export const deleteUser = async (req, res) => {
     try {
-        const account = req.userJwt;
+        const logged = req.userJwt;
         const { uid } = req.params;
 
-        const found = await User.findById(uid);
+        const found = await User.findOne({ role: "STUDENT", status: true, uid });
         if (!found) {
             return res.status(400).json({
                 success: false,
@@ -123,23 +88,10 @@ export const deleteUser = async (req, res) => {
             });
         };
 
-        if (account.role !== "PLATFORM_ADMIN" && account.role !== "HOTEL_ADMIN") {
-            if (account._id.toString() !== uid) {
-                return res.status(401).json({
-                    success: false,
-                    message: "not allowed / user not found"
-                });
-            }
-        }
-
-        if (account.role === "HOTEL_ADMIN" && found.role === "PLATFORM_ADMIN") {
-            return res.status(401).json({
-                success: false,
-                message: "not allowed - user not found"
-            });
-        }
-
-        await User.findByIdAndUpdate(uid, { status: false, name: `deleted: ${found.name}` }, { new: true });
+        await User.findByIdAndUpdate(uid, {
+            status: false, name: `deleted: ${found.name}`,
+            phone: `deleted: ${found.phone}`, email: `deleted: ${found.email}`
+        }, { new: true });
 
         return res.status(200).json({
             success: true,
@@ -154,22 +106,87 @@ export const deleteUser = async (req, res) => {
     }
 };
 
-//solo usuarios
-export const changePassword = async (req, res) => {
+// ---------- ALL ROLES - GENERAL ---------- //
+//Shows the profile of the user logged in
+export const showProfile = async (req, res) => {
     try {
-        const { uid } = req.params;
-        const { password, confirmation } = req.body;
-        const account = req.userJwt;
+        const logged = req.userJwt._id;
+        const user = await User.findById(logged);
 
-        const user = await User.findById(uid);
-
-        if (account._id.toString() !== uid) {
-            return res.status(401).json({
+        if (!user) {
+            return res.status(400).json({
                 success: false,
-                message: "not allowed / user not found"
+                message: "User not found"
             });
         }
-        const checkOldNew = await verify(user.password, password);
+
+        return res.status(200).json({
+            success: true,
+            message: "Account found successfully",
+            user
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: "Failed to find this account",
+            error: err.message
+        });
+    }
+};
+
+//edits the profile of the user logged in
+export const editUserProfile = async (req, res) => {
+    try {
+        const logged = req.userJwt._id;
+        const { name, phone, email, academic } = req.body;
+
+        const found = await User.findById(logged);
+
+        if (!found) {
+            return res.status(400).json({
+                success: false,
+                message: "user not found"
+            });
+        };
+        const newData = {
+            name: name || found.name,
+            phone: phone || found.phone,
+            email: email || found.email,
+            academic: academic || found.academic
+        };
+
+        const user = await User.findByIdAndUpdate(logged, newData, { new: true });
+
+        res.status(200).json({
+            success: true,
+            msg: 'Profile changes updated succesfully',
+            user
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            msg: 'failed to update profile changes',
+            error: err.message
+        });
+    }
+};
+
+//Allows to change de password of the account logged in
+export const changeUserPassword = async (req, res) => {
+    try {
+        const logged = req.userJwt._id;
+        const { password, confirmation } = req.body;
+
+        const found = await User.findById(logged);
+
+        if (!found) {
+            return res.status(400).json({
+                success: false,
+                message: "user not found"
+            });
+        };
+
+        const checkOldNew = await verify(found.password, password);
         if (checkOldNew) {
             return res.status(400).json({
                 success: false,
@@ -184,10 +201,9 @@ export const changePassword = async (req, res) => {
             });
         }
 
+        const newEncryptedPassword = await hash(password);
 
-        const encryptedPassword = await hash(password);
-
-        await User.findByIdAndUpdate(uid, { password: encryptedPassword }, { new: true });
+        await User.findByIdAndUpdate(logged, { password: newEncryptedPassword }, { new: true });
 
         return res.status(200).json({
             success: true,
@@ -197,67 +213,6 @@ export const changePassword = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Failed to update password",
-            error: err.message
-        });
-    }
-};
-
-//solo administradores
-
-export const getUsers = async (req, res) => {
-    try {
-        const account = req.userJwt;
-        const { limit = 10, from = 0 } = req.query;
-        const query = { status: true };
-
-        const [total, user] = await Promise.all([
-            User.countDocuments(query),
-            User.find(query)
-                .skip(Number(from))
-                .limit(Number(limit))
-        ]);
-
-        return res.status(200).json({
-            success: true,
-            message: "users list got successfully",
-            total,
-            user
-        });
-
-    } catch (err) {
-        return res.status(500).json({
-            success: false,
-            message: "Failed to get users",
-            error: err.message
-        });
-    }
-};
-
-export const changeRole = async (req, res) => {
-    try {
-        const { uid } = req.params;
-        const { role } = req.body;
-
-        const found = await User.findById(uid);
-
-        if (!found) {
-            return res.status(400).json({
-                success: false,
-                message: "user not found"
-            });
-        };
-
-        const user = await User.findByIdAndUpdate(uid, { role: role }, { new: true });
-
-        res.status(200).json({
-            success: true,
-            msg: 'Profile role updated succesfully',
-            user
-        });
-    } catch (err) {
-        res.status(500).json({
-            success: false,
-            msg: 'failed to update profile changes for this account',
             error: err.message
         });
     }

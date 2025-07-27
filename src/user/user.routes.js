@@ -1,46 +1,18 @@
 import { Router } from "express";
-import { findUser,findUserForAdmin, getUsers, editUser, deleteUser, changePassword, changeRole } from "./user.controller.js";
-import { findUserValidator,findUserForAdminValidator, getUsersValidator, editUserValidator, deleteUserValidator, changePasswordValidator, changeRoleValidator } from "../middlewares/user-validators.js";
+import {findUsers,editUser,deleteUser,showProfile,editUserProfile,changeUserPassword} from "./user.controller.js";
+import {findUsersValidator,editUserValidator,deleteUserValidator,showProfileValidator,editUserProfileValiator,changePasswordValidator} from "../middlewares/user-validators.js";
 
 const router = Router();
 
 /**
  * @swagger
- * /user/findUser/{uid}:
- *   get:
- *     tags:
- *       - User
- *     summary: Find a user by ID
- *     description: Retrieves a specific user's details using their unique ID.
- *     operationId: findUser
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: uid
- *         required: true
- *         description: The ID of the user to retrieve.
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: User found successfully.
- *       400:
- *         description: Invalid ID or user not found.
- *       500:
- *         description: Internal server error.
- */
-router.get("/findUser/:uid", findUserValidator, findUser);
-
-/**
- * @swagger
- * /user/findUserForAdmin:
+ * /user/findUsers:
  *   post:
  *     tags:
  *       - User
  *     summary: Find users with filters (Admin Only)
- *     description: Allows PLATFORM_ADMIN users to search for users using filters like ID, name, email, or role.
- *     operationId: findUserForAdmin
+ *     description: Allows ADMINISTRATOR users to search for users using filters like ID, name, email, academic code or role.
+ *     operationId: findUsers
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -53,50 +25,26 @@ router.get("/findUser/:uid", findUserValidator, findUser);
  *             properties:
  *               uid:
  *                 type: string
- *                 description: User ID
  *               name:
  *                 type: string
- *                 description: Name (search by text)
  *               email:
  *                 type: string
- *                 description: Email address
+ *               academic:
+ *                 type: string
  *               role:
  *                 type: string
- *                 enum: ["USER", "PLATFORM_ADMIN", "HOTEL_ADMIN"]
- *                 description: Role of the user
+ *                 enum: ["STUDENT", "ADMINISTRATOR"]
  *     responses:
  *       200:
  *         description: Users found successfully.
  *       403:
- *         description: Unauthorized request (only PLATFORM_ADMIN can use this endpoint).
+ *         description: Unauthorized request (only ADMINISTRATOR can use this endpoint).
  *       400:
  *         description: Invalid request parameters.
  *       500:
  *         description: Internal server error.
  */
-router.post("/findUserForAdmin", findUserForAdminValidator, findUserForAdmin);
-
-
-/**
- * @swagger
- * /user/getUsers:
- *   get:
- *     tags:
- *       - User
- *     summary: Retrieve all users
- *     description: Returns a paginated list of all users. Only accessible by administrators.
- *     operationId: getUsers
- *     security:
- *       - BearerAuth: []
- *     responses:
- *       200:
- *         description: Successfully retrieved users.
- *       403:
- *         description: Unauthorized request.
- *       500:
- *         description: Internal server error.
- */
-router.get("/getUsers", getUsersValidator, getUsers);
+router.post("/findUsers", findUsersValidator, findUsers);
 
 /**
  * @swagger
@@ -104,8 +52,8 @@ router.get("/getUsers", getUsersValidator, getUsers);
  *   put:
  *     tags:
  *       - User
- *     summary: Edit a user's information
- *     description: Allows users to update their profile data or administrators to modify user accounts.
+ *     summary: Edit a student's information
+ *     description: Allows ADMINISTRATORs to update student accounts only.
  *     operationId: editUser
  *     security:
  *       - BearerAuth: []
@@ -126,13 +74,20 @@ router.get("/getUsers", getUsersValidator, getUsers);
  *             properties:
  *               name:
  *                 type: string
+ *               phone:
+ *                 type: string
  *               email:
  *                 type: string
+ *               academic:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *                 enum: ["STUDENT", "ADMINISTRATOR"]
  *     responses:
  *       200:
  *         description: User updated successfully.
  *       400:
- *         description: Invalid request.
+ *         description: Invalid request or user not found.
  *       500:
  *         description: Internal server error.
  */
@@ -144,8 +99,8 @@ router.put("/editUser/:uid", editUserValidator, editUser);
  *   delete:
  *     tags:
  *       - User
- *     summary: Delete a user account
- *     description: Allows users to delete their own accounts or administrators to manage user removal.
+ *     summary: Delete a student's account
+ *     description: Allows ADMINISTRATORs to soft delete student accounts.
  *     operationId: deleteUser
  *     security:
  *       - BearerAuth: []
@@ -160,7 +115,7 @@ router.put("/editUser/:uid", editUserValidator, editUser);
  *       200:
  *         description: User deleted successfully.
  *       400:
- *         description: Invalid ID or unauthorized deletion.
+ *         description: Invalid ID or user not found.
  *       500:
  *         description: Internal server error.
  */
@@ -168,22 +123,73 @@ router.delete("/deleteUser/:uid", deleteUserValidator, deleteUser);
 
 /**
  * @swagger
- * /user/changePassword/{uid}:
+ * /user/showProfile:
+ *   get:
+ *     tags:
+ *       - User
+ *     summary: Show the logged-in user's profile
+ *     description: Retrieves profile information of the currently authenticated user.
+ *     operationId: showProfile
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Profile data retrieved successfully.
+ *       400:
+ *         description: User not found.
+ *       500:
+ *         description: Internal server error.
+ */
+router.get("/showProfile", showProfileValidator, showProfile);
+
+/**
+ * @swagger
+ * /user/editUserProfile:
  *   put:
  *     tags:
  *       - User
- *     summary: Change a user's password
- *     description: Allows users to update their password securely.
- *     operationId: changePassword
+ *     summary: Edit logged-in user's profile
+ *     description: Allows any logged-in user to edit their personal data.
+ *     operationId: editUserProfile
  *     security:
  *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: uid
- *         required: true
- *         description: The ID of the user updating their password.
- *         schema:
- *           type: string
+ *     requestBody:
+ *       description: Profile data to update.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               academic:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully.
+ *       400:
+ *         description: User not found or invalid data.
+ *       500:
+ *         description: Internal server error.
+ */
+router.put("/editUserProfile", editUserProfileValiator, editUserProfile);
+
+/**
+ * @swagger
+ * /user/changeUserPassword:
+ *   put:
+ *     tags:
+ *       - User
+ *     summary: Change logged-in user's password
+ *     description: Allows a user to change their password securely.
+ *     operationId: changeUserPassword
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       description: Password update data.
  *       required: true
@@ -197,60 +203,16 @@ router.delete("/deleteUser/:uid", deleteUserValidator, deleteUser);
  *             properties:
  *               password:
  *                 type: string
- *                 description: New password (must meet security requirements).
  *               confirmation:
  *                 type: string
- *                 description: Confirmation of the new password.
  *     responses:
  *       200:
  *         description: Password updated successfully.
  *       400:
- *         description: Invalid request or mismatched confirmation.
+ *         description: Validation error or password mismatch.
  *       500:
  *         description: Internal server error.
  */
-router.put("/changePassword/:uid", changePasswordValidator, changePassword);
-
-/**
- * @swagger
- * /user/changeRole/{uid}:
- *   put:
- *     tags:
- *       - User
- *     summary: Change a user's role
- *     description: Allows administrators to modify the role of a user.
- *     operationId: changeRole
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: uid
- *         required: true
- *         description: The ID of the user whose role is being updated.
- *         schema:
- *           type: string
- *     requestBody:
- *       description: Role update data.
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - role
- *             properties:
- *               role:
- *                 type: string
- *                 enum: ["USER", "PLATFORM_ADMIN", "HOTEL_ADMIN"]
- *                 description: The new role assigned to the user.
- *     responses:
- *       200:
- *         description: Role updated successfully.
- *       400:
- *         description: Invalid request or unauthorized role update.
- *       500:
- *         description: Internal server error.
- */
-router.put("/changeRole/:uid", changeRoleValidator, changeRole);
+router.put("/changeUserPassword", changePasswordValidator, changeUserPassword);
 
 export default router;

@@ -4,12 +4,14 @@ const userSchema = Schema({
     name: {
         type: String,
         required: [true, "complete name is needed for your account"],
-        maxLength: [60, "Name cannot exceed 60 characters"]
+        maxLength: [60, "Name cannot exceed 60 characters"],
+        unique: true
     },
     phone: {
         type: String,
         required: [true, "phone numer is needed for your account"],
-        maxLength: [8, "phone numer cannot exceed 8 characters"]
+        maxLength: [8, "phone numer cannot exceed 8 characters"],
+        unique: true
     },
     email: {
         type: String,

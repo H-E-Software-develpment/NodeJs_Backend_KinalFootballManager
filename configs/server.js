@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { hash } from "argon2";
 import authRoutes from "../src/auth/auth.routes.js";
+import userRoutes from "../src/user/user.routes.js";
 import { dbConnection } from './mongo.js';
 import { swaggerDocs, swaggerUi } from "./swagger.js";
 
@@ -19,11 +20,6 @@ class ExpressServer {
         this.routes();
     }
 
-    /*
-    .then(async () => {
-            await this.defaultAdministratorAccount();
-        });
-    */
     async conectarDB() {
         try {
             await dbConnection();
@@ -44,6 +40,7 @@ class ExpressServer {
     routes() {
         this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
         this.app.use("/kinalfootballfield/v1/auth", authRoutes);
+        this.app.use("/kinalfootballfield/v1/user", userRoutes);
     }
 
     listen() {
