@@ -3,7 +3,11 @@
 import mongoose from 'mongoose';
 
 export const dbConnection = async () => {
+<<<<<<< HEAD
     if (mongoose.connection.readyState === 1) {
+=======
+     if (mongoose.connection.readyState === 1) {
+>>>>>>> main
         return;
     }
     try{
