@@ -8,7 +8,7 @@ Ofrecer comprobantes y/o facturas de manera digital con toda la información nec
 Registrar datos de los torneos anuales y permitir inscripción de equipos desde la app en un futuro.
 
 ## 🌐 URL API WEB:
- - 🔍 https://react-frontend-bank-management.web.app/
+ - 🔍 https://kinalfootballmanager.web.app/
 
 ## 🌐 Documentacion (Backend)
   - 🔍 https://node-js-backend-kinal-football-mana.vercel.app/kinalfootballfield/v1/api-docs/
