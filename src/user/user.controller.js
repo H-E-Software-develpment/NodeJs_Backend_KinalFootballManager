@@ -49,7 +49,7 @@ export const editUser = async (req, res) => {
         const newData = req.body;
         const logged = req.userJwt;
 
-        const found = await User.findOne({ role: "STUDENT", status: true, uid });
+        const found = await User.findOne({ role: "STUDENT", status: true, _id: uid });
 
         if (!found) {
             return res.status(400).json({
@@ -80,7 +80,7 @@ export const deleteUser = async (req, res) => {
         const logged = req.userJwt;
         const { uid } = req.params;
 
-        const found = await User.findOne({ role: "STUDENT", status: true, uid });
+        const found = await User.findOne({ role: "STUDENT", status: true, _id: uid });
         if (!found) {
             return res.status(400).json({
                 success: false,
