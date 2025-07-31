@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {createField,editField,deleteField,findFields} from "./field.controller.js";
-import {createFieldValidator,editFieldValidator,deleteUserValidator,fidnFieldsValidator} from "../middlewares/field-validators.js";
+import {createFieldValidator,editFieldValidator,deleteUserValidator,findFieldsValidator} from "../middlewares/field-validators.js";
 
 const router = Router();
 
@@ -152,6 +152,6 @@ router.delete("/deleteField/:fid", deleteUserValidator, deleteField);
  *       500:
  *         description: Internal server error.
  */
-router.post("/findFields", fidnFieldsValidator, findFields);
+router.post("/findFields", findFieldsValidator, findFields);
 
 export default router;

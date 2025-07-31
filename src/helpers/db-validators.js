@@ -1,5 +1,7 @@
 import User from "../user/user.model.js";
 import Field from "../field/field.model.js";
+import Event from "../event/event.model.js";
+import Payment from "../payment/payment.model.js";
 
 export const findUser = async (uid = " ") => {
     const user = await User.findById(uid);
@@ -39,5 +41,19 @@ export const findField = async (fid = " ") => {
     const field = await Field.findById(fid);
     if (!field) {
         throw new Error(`The field provided couldn't be found or doesn't exist`);
+    }
+};
+
+export const findEvent = async (eid = " ") => {
+    const event = await Event.findById(eid);
+    if (!event) {
+        throw new Error(`The event provided couldn't be found or doesn't exist`);
+    }
+};
+
+export const findPayment = async (pid = " ") => {
+    const payment = await Payment.findById(pid);
+    if (!payment) {
+        throw new Error(`The payment provided couldn't be found or doesn't exist`);
     }
 };
