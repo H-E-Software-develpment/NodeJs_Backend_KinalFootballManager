@@ -16,7 +16,7 @@ const options = {
         },
         servers: [
             {
-                url: "http://localhost:3001/kinalfootballfield/v1",
+                url: "https://node-js-backend-kinal-football-mana.vercel.app/kinalfootballfield/v",
             },
         ],
         components: {

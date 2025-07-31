@@ -7,11 +7,20 @@ Integrar un sistema de noticias y avisos para comunicar eventos como nuestros to
 Ofrecer comprobantes y/o facturas de manera digital con toda la información necesaria detallada en este mismo apartado.
 Registrar datos de los torneos anuales y permitir inscripción de equipos desde la app en un futuro.
 
- ## 📘 Manual de usuario ( PDF - public/doc/):
-[📄 Ver Manual de Usuario (PDF)]()
+## 🌐 URL API WEB:
+ - 🔍 https://react-frontend-bank-management.web.app/
 
-## 🔒 Credenciales - acceso principal:
-### - 🔑 Incio de sesion con cuenta institucional de Microsoft.
+## 🌐 Documentacion (Backend)
+  - 🔍 https://node-js-backend-kinal-football-mana.vercel.app/kinalfootballfield/v1/api-docs/
+
+## 📘 Documentos del Proyecto (PDF)
+- [📄 Propuesta](./public/Propuesta%20de%20proyecto%20FOOTBALL%20KINAL%20FIELD%20-%20HE%20S.D.pdf)
+- [🛠️ Planificacion](./public/PLANIFICACIÓN%20API%20WEB%20KINAL%20FOOTBALL%20FIELD%20-%20HE.pdf)
+- [⚙️ Reporte de trabajo final](./public/Reporte%20final%20API%20Web%20Football%20KINAL%20-%20field%20-%20HE pdf)
+
+## 🔒 Credenciales - acceso principal ADMINISTRADOR:
+### - 🔑 braulioecheverria@kinal.edu.gt
+### - 🔑 ADMINpass_1
 
 ## 💡Por: H.E - Software Development
  ### 🪪 Anthony Josue Escobar Ponce  
