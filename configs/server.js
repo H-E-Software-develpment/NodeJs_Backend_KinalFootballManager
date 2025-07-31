@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import { hash } from "argon2";
 import authRoutes from "../src/auth/auth.routes.js";
 import userRoutes from "../src/user/user.routes.js";
+import fieldRoutes from "../src/field/field.routes.js";
 import { dbConnection } from './mongo.js';
 import { swaggerDocs, swaggerUi } from "./swagger.js";
 
@@ -41,6 +42,7 @@ class ExpressServer {
         this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
         this.app.use("/kinalfootballfield/v1/auth", authRoutes);
         this.app.use("/kinalfootballfield/v1/user", userRoutes);
+        this.app.use("/kinalfootballfield/v1/field", fieldRoutes);
     }
 
     listen() {

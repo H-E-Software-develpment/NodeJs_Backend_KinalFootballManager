@@ -1,4 +1,5 @@
 import User from "../user/user.model.js";
+import Field from "../field/field.model.js";
 
 export const findUser = async (uid = " ") => {
     const user = await User.findById(uid);
@@ -6,7 +7,6 @@ export const findUser = async (uid = " ") => {
         throw new Error(`The user provided couldn't be found or doesn't exist`);
     }
 };
-
 
 export const findEmail = async (email = " ") => {
     const user = await User.findOne({ email });
@@ -33,4 +33,11 @@ export const validRole = async (role = " ") => {
     if (role !== "STUDENT" && role !== "ADMINISTRATOR") {
         throw new Error(`Unvalid role`);
     };
+};
+
+export const findField = async (fid = " ") => {
+    const field = await Field.findById(fid);
+    if (!field) {
+        throw new Error(`The field provided couldn't be found or doesn't exist`);
+    }
 };
