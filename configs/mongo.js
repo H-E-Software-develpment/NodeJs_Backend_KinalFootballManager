@@ -3,6 +3,9 @@
 import mongoose from 'mongoose';
 
 export const dbConnection = async () => {
+     if (mongoose.connection.readyState === 1) {
+        return;
+    }
     try{
         mongoose.connection.on('error', () => {
             console.log('MongoDB | could not be connect to mongodb')
