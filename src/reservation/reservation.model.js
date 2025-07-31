@@ -9,7 +9,7 @@ const reservationSchema = new Schema({
     payment: {
         type: Schema.Types.ObjectId,
         ref: "Payment",
-        required: [true, "Payment metod ID is required"]
+        required: [true, "Payment metod / card is required"]
     },
     teacher: {
         type: Schema.Types.ObjectId,
@@ -22,7 +22,7 @@ const reservationSchema = new Schema({
     },
     timeRange: {
         type: TimeRanges,
-        required: [true, "Check-in date is required"]
+        required: [true, "time range date is required"]
     },
     status: {
         type: Boolean,
